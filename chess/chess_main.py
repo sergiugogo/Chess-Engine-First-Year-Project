@@ -32,12 +32,15 @@ def main():
     screen = p.display.set_mode((WIDTH,HEIGHT))
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
-
     gs = chess_engine.game_state()
+
+    valid_moves = gs.get_valid_moves()
+    move_made = False # flag variable for when a move is made
+
     load_images() # only once, before the loop
     running = True
-    sqselected = () #no square is selected, keep track of the last click of the user (tuple: (row, col))
-    playerclicks = []   #keep track of the player clicks (two tuples: [(6,4), (4, 4)])
+    sq_selected = () #no square is selected, keep track of the last click of the user (tuple: (row, col))
+    player_clicks = []   #keep track of the player clicks (two tuples: [(6,4), (4, 4)])
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -46,18 +49,34 @@ def main():
                 location = p.mouse.get_pos() #(x,y) location of mouse
                 col = location[0] // SQ_SIZE
                 row = location[1] // SQ_SIZE
-                if sqselected == (row, col): #the user clicked the same square twice
-                    sqselected = () #deselect
-                    playerclicks = []  #clear player clicks
+                print(f"Mouse clicked at {row}, {col}")
+                if sq_selected == (row, col): #the user clicked the same square twice
+                    sq_selected = () #deselect
+                    player_clicks = []  #clear player clicks
                 else:
-                    sqselected = (row, col)
-                    playerclicks.append(sqselected) #append for boths 1st and 2nd clicks
-                if len(playerclicks) == 2:  #after the 2nd click
-                        mv = chess_engine.Move(playerclicks[0], playerclicks[1], gs.board)
-                        print(mv.getchessnotation())
-                        gs.makemove(mv)
-                        sqselected = () #reset the user clicks
-                        playerclicks = []
+                    sq_selected = (row, col)
+                    player_clicks.append(sq_selected) #append for boths 1st and 2nd clicks
+                if len(player_clicks) == 2:  #after the 2nd click
+                        move = chess_engine.Move(player_clicks[0], player_clicks[1], gs.board)
+                        print(f"Trying to make move: {move.get_chess_notation()}")
+                        if move in valid_moves:
+                            gs.make_move(move)
+                            print(f"Move made: {move.get_chess_notation()}")
+                            move_made = True
+                        else:
+                            print(f"Invalid move: {move.get_chess_notation()}")
+                        sq_selected = () #reset the user clicks
+                        player_clicks = []
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z: # we undo a move if 'z' is pressed
+                    gs.undo()
+                    move_made = True
+                    print("Move undone.")
+            if move_made:
+                print("Updating valid moves...")  # Debug log
+                valid_moves = gs.get_valid_moves()
+                move_made = False
+                print(move_made)
 
 
         draw_game_state(screen, gs)
