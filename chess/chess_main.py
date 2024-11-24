@@ -63,10 +63,12 @@ def main():
                             gs.make_move(move)
                             print(f"Move made: {move.get_chess_notation()}")
                             move_made = True
+                            sq_selected = ()  # reset the user clicks
+                            player_clicks = []
                         else:
                             print(f"Invalid move: {move.get_chess_notation()}")
-                        sq_selected = () #reset the user clicks
-                        player_clicks = []
+                            player_clicks = [sq_selected]
+
             elif e.type == p.KEYDOWN:
                 if e.key == p.K_z: # we undo a move if 'z' is pressed
                     gs.undo()
@@ -77,6 +79,7 @@ def main():
                 valid_moves = gs.get_valid_moves()
                 move_made = False
                 print(move_made)
+
 
 
         draw_game_state(screen, gs)
