@@ -22,7 +22,7 @@ Welcome to the Chess Engine project developed during my first year of Computer S
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/sergiu210106/Chess-Engine-First-Year-Project.git
+   git clone https://github.com/sergiugogo/Chess-Engine-First-Year-Project.git
    ```
 
 2. **Navigate to the Project Directory:**
